@@ -44,3 +44,36 @@ select location, count(*) from customers group by location
 --20. Write a query that applies the HAVING clause to filter out Departments with total salary expenses greater than 100,000.
 select departmentid, sum(salary) from employees group by departmentid having sum(salary) > 100000
 
+
+
+--Hard-Level Tasks (10) 
+--21. Write a query that shows the average (AVG) sales for each product category, and then uses HAVING to filter categories with an average sales amount greater than 200.
+select category, avg(price) from products group by category having avg(price) > 200
+--22. Write a query to calculate the total (SUM) sales for each employee, then filter the results using HAVING to include only employees with total sales over 5000.
+select employeeid, sum(salary) from employees group by employeeid having sum(salary) > 5000
+--23. Write a query to find the total (SUM) and average (AVG) salary of employees grouped by department, and use HAVING to include only departments with an average salary greater than 6000. 
+select departmentid, sum(salary) Sum , avg(salary) Average from employees group by departmentid having avg(salary) > 6000
+--24. Write a query that finds the maximum (MAX) and minimum (MIN) order value for each customer, and then applies HAVING to exclude customers with an order value less than 50. 
+select customerid, max(saleamount) MaxValue, min(saleamount) MinValue from Sales group by CustomerID, saleamount having saleamount > 50
+--25. Write a query that calculates the total sales (SUM) and counts distinct products sold in each Region, and then applies HAVING to filter regions with more than 10 products sold.
+select region, sum(saleamount) TotalSales, count(distinct productid) Amount from sales group by region having count(productid) > 10
+--26. Write a query to find the MIN and MAX order quantity per product, and then use GROUP BY to group the results by ProductCategory.
+select productid, category, min(stockquantity), max(stockquantity) from products group by productid, category
+--27. Write a query to pivot the Sales table by Year and show the sum of SalesAmount for each Region.
+SELECT * 
+FROM (
+    SELECT 
+        Region, 
+        YEAR(SaleDate) AS Year, 
+        SaleAmount
+    FROM Sales2
+) AS SourceTable
+PIVOT (
+    SUM(SaleAmount) 
+    FOR Year IN ([2020], [2021], [2022], [2023], [2024])
+) AS PivotTable;
+--28. Write a query to unpivot the Sales table, converting Q1, Q2, Q3, and Q4 columns into rows showing total sales per quarter. 
+
+--29. Write a query to count the number of orders per product, filter those with more than 50 orders using HAVING, and group them by ProductCategory. 
+select category, productid, count(*) NoOfProduct from products group by category, productid having sum(stockquantity) > 50
+--30. Write a query to pivot the EmployeeSales table, displaying the total sales per employee for each quarter (Q1, Q2, Q3, Q4).
