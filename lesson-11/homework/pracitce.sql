@@ -48,7 +48,10 @@ on m.MovieID = a.MovieID
 where ReleaseYear > 2015
 
 --Task 8 Retrieve the order date, customer name, and the product ID for all orders.
-select o.OrderDate, c.CustomerName, d.ProductID 
+select 
+	o.OrderDate, 
+	c.CustomerName, 
+	d.ProductID 
 from Orders o 
 join Customers c 
 on o.CustomerID = c.CustomerID 
