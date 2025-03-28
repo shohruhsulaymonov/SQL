@@ -27,11 +27,11 @@ on p.ProductID = s.ProductID
 
 --Task 5 Find the names of employees along with the names of their managers.
 select 
-	e1.Name as Employee, 
-	e2.Name as Manager
-from Employees e1 
-left join employees e2 
-on e1.ManagerID = e2.EmployeeID
+	employee.Name as Employee, 
+	manager.Name as Manager
+from Employees employee 
+left join employees manager 
+on employee.ManagerID = manager.EmployeeID
 
 --Task 6 Generate all possible combinations of colors and sizes.
 select 
