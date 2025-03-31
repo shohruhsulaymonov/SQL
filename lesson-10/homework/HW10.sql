@@ -58,10 +58,21 @@ where emp.employeeid = employeeid
 order by orderdate desc
 		) result
 --10.Write a query to perform a CROSS APPLY between Departments and a table-valued function that returns a list of employees working in that department.
---haven't covered that yet
+create function fn_department
+	(@depid int)
+returns table 
+return 
+	(select e.name, d.DepartmentName 
+	from Departments d 
+	join employees e 
+	on d.DepartmentID = e.DepartmentID
+	where @depid = e.DepartmentID);
 
 
-
+select fn.*
+from Employees e 
+cross apply fn_department(e.departmentID) fn
+	
 
 --🟠 Medium-Level Tasks (10)
 --11.Write a query that uses the AND logical operator in the ON clause to join Orders and Customers, and filter customers who placed an order with a total amount greater than 5000.
@@ -104,8 +115,7 @@ outer apply(
 select top 1 CustomerID, OrderDate 
 from orders
 where c.CustomerID = CustomerID 
-order by OrderDate desc
-		) o
+order by OrderDate desc) o
 --19.Write a query to join Products and Sales using AND in the ON clause to filter products that were sold in 2023 and have a rating greater than 4.
 select * 
 from Products p 
@@ -131,14 +141,6 @@ join customer c
 on o.customerid = c.customerid 
 and c.city = 'New York' 
 and o.customerid in (select customerid from orders group by customerid having count(*) > 2)
--- Solution2
-select c.customerid 
-from orders o 
-join customer c 
-on o.customerid = c.customerid 
-and c.city = 'New York' 
-group by c.customerid 
-having count(*) > 2
 --22. Write a query to demonstrate the use of OR in the ON clause when joining Products and Sales to show products that are either part of the 'Electronics' category or have a discount greater than 15%. 
 select * 
 from products p 
@@ -159,9 +161,28 @@ group by category_id
 ) [count] 
 on c.category_id = [count].category_id
 --24. Write a query to join a Temp table (Temp_Employees) with the Employees table using a complex condition in the ON clause (e.g., salary > 4000 AND department = 'IT'). 
---??????????????????????????????????
+SELECT e.employeeid, e.name, d.departmentname, e.salary, t.temp_employeeid, t.salary AS temp_salary
+FROM Employees e
+JOIN Departments d ON e.departmentid = d.departmentid
+JOIN #Temp_Employees t 
+ON e.name = t.name 
+AND d.departmentname = t.departmentname 
+AND e.salary > 4000 
+AND d.departmentname = 'IT';
+
 --25. Write a query to demonstrate CROSS APPLY by applying a table-valued function that returns the number of employees working in each department for every row in the Departments table. 
---??????????????????????????????
+create function fn_count
+	(@depid int)
+returns table 
+return 
+	(select d.DepartmentName, count(*) as [Number Of Employees]
+	from Employees e join Departments d on e.DepartmentID = d.DepartmentID
+	where @depid = e.DepartmentID
+	group by d.DepartmentName);
+
+select distinct fn.*
+from Employees e 
+cross apply fn_count(e.departmentID) fn
 --26. Orders and Customers using AND in the ON clause to show orders where the customer is from 'California' and the order amount is greater than 1000. 
 select * 
 from orders o 
@@ -177,7 +198,15 @@ on e.DepartmentID = d.DepartmentID
 and (d.DepartmentName in('HR', 'Finance') 
 or e.JobTitle = 'Executive');
 --28. Write a query to use OUTER APPLY between Customers and a table-valued function that returns all orders placed by each customer, and show customers who have not placed any orders. 
---???????????????????????????????
+create function fn_orders
+(@orders int)
+returns table 
+return
+	(select * 
+	from orders
+	where CustomerID = @orders);
+
+select CustomerName, fn.* from customers outer apply fn_orders(CustomerID) fn;
 --29. Write a query to join Sales and Products using AND in the ON clause to filter products that have both a sales quantity greater than 100 and a price above 50. 
 select * 
 from sales s 
