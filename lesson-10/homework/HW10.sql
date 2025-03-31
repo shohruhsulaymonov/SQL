@@ -1,5 +1,4 @@
 ﻿--🟢 Easy-Level Tasks (10)
-set statistics io on
 --1.Write a query to perform an INNER JOIN between Orders and Customers using AND in the ON clause to filter orders placed after 2022.
 SELECT * 
 FROM Orders o 
@@ -21,12 +20,11 @@ from orders ord
 join #temp_orders temp 
 on ord.orderid = temp.orderid
 --5.Write a query to demonstrate a CROSS APPLY between Employees and a derived table that shows their department's top-performing sales (e.g., top 5 sales).
---select * 
---from Employees e 
---join departments d 
---on e.departmentid = d.departmentid 
---cross apply (select top 2 s.saleid, s.amount from Sales s where e.employeeid = s.employeeid) s order by d.departmentname, s.amount desc
---?????????????????????????????
+select * 
+from Employees e 
+join departments d 
+on e.departmentid = d.departmentid 
+cross apply (select top 2 s.saleid, s.amount from Sales s where e.employeeid = s.employeeid) s order by d.departmentname, s.amount desc
 --6.Write a query to join Customers and Orders using AND in the ON clause to filter customers who have placed orders in 2023 and have a loyalty status of 'Gold'.
 select * 
 from Customers c 
@@ -52,7 +50,7 @@ and (supplier_name = 'Supplier A'
 or supplier_name = 'Supplier B');
 --9.Write a query to demonstrate the use of OUTER APPLY between Employees and a derived table that returns each employee's most recent order.
 select emp.name, result.orderdate, result.amount
-from Employees2 emp
+from Employees emp
 cross apply(
 select top 1 * 
 from orders 
@@ -60,7 +58,7 @@ where emp.employeeid = employeeid
 order by orderdate desc
 		) result
 --10.Write a query to perform a CROSS APPLY between Departments and a table-valued function that returns a list of employees working in that department.
---???????????????????????????????
+--haven't covered that yet
 
 
 
