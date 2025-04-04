@@ -21,13 +21,6 @@ SELECT DISTINCT Category, ProductName from Products
 --10. Order the results by ProductName in descending order.
 SELECT DISTINCT ProductName from Products order by ProductName desc;
 
-
-
-
-
-
-
-
 --🟠 Lesson 4 Medium-Level Tasks (10)
 
 --1. Write a query to select the top 10 products from the Products table, ordered by Price DESC.
@@ -48,8 +41,6 @@ select * from products where ProductName like '%e%'
 select * from Employees where department in('HR', 'IT', 'Finance')
 --9. Use ORDER BY to display a list of customers ordered by City in ascending and PostalCode in descending order.
 select * from Customers order by city asc, PostalCode desc
-
-
 
 --🔴 Lesson 4 Hard-Level Tasks (10)
 
