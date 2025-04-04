@@ -3,25 +3,23 @@
 --1. Write a query to select the top 5 employees from the Employees table.
 select top 5 * from employees
 --2. Use SELECT DISTINCT to select unique ProductName values from the Products table.
-SELECT DISTINCT NAME AS PRODUCTNAME FROM PRODUCTS
+SELECT DISTINCT ProductName FROM Products
 --3.  Write a query that filters the Products table to show products with Price > 100.
-SELECT * FROM PRODUCTS WHERE PRICE > 100
+SELECT * FROM Products WHERE Prrice > 100
 --4. Write a query to select all CustomerName values that start with 'A' using the LIKE operator.
-SELECT Name AS CustomerName from Customers where Name like 'A%'
+SELECT CustomerName from Customers where CustomerName like 'A%'
 --5. Order the results of a Products query by Price in ascending order.
-select * from products order by price;
-		--6. Write a query that uses the WHERE clause to filter for employees with Salary >= 5000 and Department = 'HR'.
-		select e.* from employees as e
-		join departments as d on e.DEPARTMENT_ID = d.DEPARTMENT_ID
-		where e.salary >= 5000 and d.DEPARTMENT_NAME = 'Human Resources'
+select * from Products order by Price;
+--6. Write a query that uses the WHERE clause to filter for employees with Salary >= 5000 and Department = 'HR'.
+select * from Employees where Salary >= 60000 and DepartmentName = 'HR'
 --7. Use ISNULL to replace NULL values in the Email column with the text "noemail@example.com".
-select isnull(email, 'noemail@example.com') from customers
+select isnull(Email, 'noemail@example.com') from Employees
 --8. Write a query that shows all products with Price BETWEEN 50 AND 100.
-select * from products where price BETWEEN 50 AND 100
+select * from Products where price BETWEEN 50 AND 100
 --9. Use SELECT DISTINCT on two columns (Category and ProductName) in the Products table.
-SELECT DISTINCT Category, Name as ProductName from products
+SELECT DISTINCT Category, ProductName from Products
 --10. Order the results by ProductName in descending order.
-SELECT DISTINCT Name as ProductName from products order by Name desc;
+SELECT DISTINCT ProductName from Products order by ProductName desc;
 
 
 
