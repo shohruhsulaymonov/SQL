@@ -21,8 +21,8 @@ select CustomerID, sum(SaleAmount) Total from sales group by CustomerID
 select DepartmentName, count(*) as CountOfEmp from Employees group by DepartmentName having count(*) > 5
 
 --● Medium-Level Tasks (10) 
-    --11. Write a query to calculate the total sales and average sales for each product category from the Sales table.
-    select Category, sum(sales) Total, avg(sales) Average from Sales group by Category
+--11. Write a query to calculate the total sales and average sales for each product category from the Sales table.
+select Category, sum(sales) Total, avg(sales) Average from Sales group by Category
 --12. Write a query that uses COUNT(columnname) to count the number of employees with a specific JobTitle.
 select Count(Employeename) CountOfEmp from Employees where Departmentname = 'HR'
 --13. Write a query that finds the highest (MAX) and lowest (MIN) Salary by department in the Employees table.
@@ -37,19 +37,17 @@ select Category, avg(Price) AvgPrice from Products group by Category having avg(
 select year(SaleDate) Year, sum(Saleamount) from Sales group by year(SaleDate)
 --18. Write a query that uses COUNT to show the number of customers who placed at least 3 orders.
 select CustomerID, count(*) NumOfOrders from Orders group by CustomerID having count(*) >= 3
---19. Write a query that uses COUNT to show the number of customers who placed orders in each region.
-select location, count(*) from customers group by location
---20. Write a query that applies the HAVING clause to filter out Departments with total salary expenses greater than 100,000.
+--19. Write a query that applies the HAVING clause to filter out Departments with total salary expenses greater than 100,000.
 select DepartmentName, sum(Salary) from Employees group by DepartmentName having not sum(Salary) > 500000
 
 
 --Hard-Level Tasks (10) 
 --21. Write a query that shows the average (AVG) sales for each product category, and then uses HAVING to filter categories with an average sales amount greater than 200.
 select category, avg(price) from products group by category having avg(price) > 200
---22. Write a query to calculate the total (SUM) sales for each employee, then filter the results using HAVING to include only employees with total sales over 5000.
-select employeeid, sum(salary) from employees group by employeeid having sum(salary) > 5000
---23. Write a query to find the total (SUM) and average (AVG) salary of employees grouped by department, and use HAVING to include only departments with an average salary greater than 6000. 
-select departmentid, sum(salary) Sum , avg(salary) Average from employees group by departmentid having avg(salary) > 6000
+--22. Write a query to calculate the total (SUM) sales for each Customer, then filter the results using HAVING to include only Customers with total sales over 1500.
+select CustomerID, sum(Saleamount) from Sales group by CustomerID having sum(SaleAmount) > 1500
+--23. Write a query to find the total (SUM) and average (AVG) salary of employees grouped by department, and use HAVING to include only departments with an average salary greater than 65000. 
+select DepartmentName, sum(salary) Sum , avg(salary) Average from employees group by DepartmentName having avg(salary) > 65000
 --24. Write a query that finds the maximum (MAX) and minimum (MIN) order value for each customer, and then applies HAVING to exclude customers with an order value less than 50. 
 select customerid, max(saleamount) MaxValue, min(saleamount) MinValue from Sales group by CustomerID, saleamount having saleamount > 50
 --25. Write a query that calculates the total sales (SUM) and counts distinct products sold in each Region, and then applies HAVING to filter regions with more than 10 products sold.
