@@ -42,33 +42,15 @@ select DepartmentName, sum(Salary) from Employees group by DepartmentName having
 
 
 --Hard-Level Tasks (10) 
---21. Write a query that shows the average (AVG) sales for each product category, and then uses HAVING to filter categories with an average sales amount greater than 200.
+--20. Write a query that shows the average (AVG) sales for each product category, and then uses HAVING to filter categories with an average sales amount greater than 200.
 select category, avg(price) from products group by category having avg(price) > 200
---22. Write a query to calculate the total (SUM) sales for each Customer, then filter the results using HAVING to include only Customers with total sales over 1500.
+--21. Write a query to calculate the total (SUM) sales for each Customer, then filter the results using HAVING to include only Customers with total sales over 1500.
 select CustomerID, sum(Saleamount) from Sales group by CustomerID having sum(SaleAmount) > 1500
---23. Write a query to find the total (SUM) and average (AVG) salary of employees grouped by department, and use HAVING to include only departments with an average salary greater than 65000. 
+--22. Write a query to find the total (SUM) and average (AVG) salary of employees grouped by department, and use HAVING to include only departments with an average salary greater than 65000. 
 select DepartmentName, sum(salary) Sum , avg(salary) Average from employees group by DepartmentName having avg(salary) > 65000
---24. Write a query that finds the maximum (MAX) and minimum (MIN) order value for each customer, and then applies HAVING to exclude customers with an order value less than 50. 
-select customerid, max(saleamount) MaxValue, min(saleamount) MinValue from Sales group by CustomerID, saleamount having saleamount > 50
---25. Write a query that calculates the total sales (SUM) and counts distinct products sold in each Region, and then applies HAVING to filter regions with more than 10 products sold.
-select region, sum(saleamount) TotalSales, count(distinct productid) Amount from sales group by region having count(productid) > 10
---26. Write a query to find the MIN and MAX order quantity per product, and then use GROUP BY to group the results by ProductCategory.
-select productid, category, min(stockquantity), max(stockquantity) from products group by productid, category
---27. Write a query to pivot the Sales table by Year and show the sum of SalesAmount for each Region.
-SELECT * 
-FROM (
-    SELECT 
-        Region, 
-        YEAR(SaleDate) AS Year, 
-        SaleAmount
-    FROM Sales2
-) AS SourceTable
-PIVOT (
-    SUM(SaleAmount) 
-    FOR Year IN ([2020], [2021], [2022], [2023], [2024])
-) AS PivotTable;
---28. Write a query to unpivot the Sales table, converting Q1, Q2, Q3, and Q4 columns into rows showing total sales per quarter. 
-
---29. Write a query to count the number of orders per product, filter those with more than 50 orders using HAVING, and group them by ProductCategory. 
-select category, productid, count(*) NoOfProduct from products group by category, productid having sum(stockquantity) > 50
---30. Write a query to pivot the EmployeeSales table, displaying the total sales per employee for each quarter (Q1, Q2, Q3, Q4).
+--23. Write a query that finds the maximum (MAX) and minimum (MIN) order value for each customer, and then applies HAVING to exclude customers with an order value less than 50. 
+select CustomerID, max(TotalAmount) Max, min(TotalAmount) Min from orders group by CustomerID having max(TotalAmount) > 50 and min(TotalAmount) > 50
+--24. Write a query that calculates the total sales (SUM) and counts distinct products sold in each month, and then applies HAVING to filter the months with more than 8 products sold.
+select datename(month, saledate), sum(saleamount) Total, count(Distinct ProductID) UniqueProducts from sales group by datename(month, saledate) having count(distinct ProductID) > 8
+--25. Write a query to find the MIN and MAX order quantity per Year. From orders table. (Do some research).
+select year(orderdate) Year, min(TotalAmount) Min, max(TotalAmount) Max from Orders group by year(orderdate)
