@@ -190,3 +190,8 @@ from cte
 )
 
 select * from winnings
+
+--Task 10: Spending by Platform per Date
+
+select Spend_date, Platform, sum(Amount) as Total_Amount, count(User_id) as Total_Users from Spending
+group by Spend_date, Platform
