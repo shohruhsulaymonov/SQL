@@ -3,7 +3,7 @@ select *,
 	ROW_NUMBER() over (order by saledate) RowNum
 from ProductSales
 --2. Write a query to rank products based on the total quantity sold (use DENSE_RANK())
-with cte as(
+with CTETotal as(
 select 
 	ProductName,
 	sum(quantity) Qty
@@ -12,12 +12,12 @@ group by ProductName
 )
 select *,
 	DENSE_RANK() over (order by Qty desc) Rnk
-from cte
+from CTETotal
 --3. Write a query to identify the top sale for each customer based on the SaleAmount.
 go
-with cte as(
+with CTETopSale as(
 select *,
-	max(saleamount) over (partition by customerid) max
+	max(saleamount) over (partition by customerid) TopSale
 from productsales
 )
 select 
@@ -27,8 +27,8 @@ select
 	SaleAmount,
 	Quantity,
 	CustomerID
-from cte
-where saleamount = MAX
+from CTETopSale
+where saleamount = TopSale
 --4. Write a query to display each sale's amount along with the next sale amount in the order of SaleDate using the LEAD() function
 select
 	SaleDate,
@@ -43,10 +43,10 @@ select
 from ProductSales
 --6. Write a query to rank each sale amount within each product category.
 select *,
-	rank() over (partition by productname order by saleamount desc)
+	rank() over (partition by productname order by saleamount desc) rnk
 from productsales
 --7. Write a query to identify sales amounts that are greater than the previous sale's amount
-with cte as(
+with CTEAmount as(
 select
 	*,
 	isnull(lag(saleamount) over (order by saledate), 0) PrevSale
@@ -59,10 +59,10 @@ select
 	SaleAmount,
 	Quantity,
 	CustomerID
-from cte
+from CTEAmount
 where SaleAmount > prevSale
 --8. Write a query to calculate the difference in sale amount from the previous sale for every product
-with cte as(
+with CTEPrev as(
 select *,
 	lag(saleamount) over (order by saledate) PrevSale
 from ProductSales
@@ -74,9 +74,9 @@ select SaleID,
 	Quantity,
 	CustomerID,
 	SaleAmount - PrevSale as Difference
-from cte
+from CTEPrev
 --9. Write a query to compare the current sale amount with the next sale amount in terms of percentage change.
-with cte as(
+with CTENext as(
 select *,  
 	lead(saleamount) over (order by saledate) NextSale
 from ProductSales
@@ -88,18 +88,18 @@ select SaleID,
 	Quantity,
 	CustomerID,
 	cast(((nextsale-saleamount)/SaleAmount)*100 as int) PercentageChange
-from cte
+from CTENext
 --10. Write a query to calculate the ratio of the current sale amount to the previous sale amount within the same product.
-with cte as(
+with CTEDivisor as(
 select *,
 	lag(SaleAmount) over (partition by productname order by saledate) PrevSale
 from ProductSales
 )
 select *,
 	round(saleamount/prevsale, 2) as ratio
-from cte
+from CTEDivisor
 --11. Write a query to calculate the difference in sale amount from the very first sale of that product.
-with cte as(
+with CTEFirstSale as(
 select *,
 	FIRST_VALUE(SaleAmount) over (partition by productNAme order by saledate) FirstSale
 from ProductSales
@@ -111,15 +111,15 @@ select SaleID,
 	Quantity,
 	CustomerID,
 	saleamount - firstsale Diff
-from cte
+from CTEFirstSale
 --12. Write a query to find sales that have been increasing continuously for a product (i.e., each sale amount is greater than the previous sale amount for that product).
-with cte as(
+with CTEPrev as(
 select *,
 	lag(SaleAmount) over (partition by productname order by saledate) PrevSale
 from ProductSales
 )
 select *
-from cte
+from CTEPrev
 where saleamount > prevsale
 --13. Write a query to calculate a "closing balance" for sales amounts which adds the current sale amount to a running total of previous sales.
 select SaleID,
@@ -129,10 +129,10 @@ select SaleID,
 	sum(Saleamount) over (order by saledate rows between unbounded preceding and current row) ClosingBalance
 from productSales
 --14. Write a query to calculate the moving average of sales amounts over the last 3 sales.
-select top 3
+select
 	SaleDate,
 	SaleAmount,
-	avg(saleamount) over (order by SaleDate desc rows between 1 following and 3 following) as SMA
+	avg(saleamount) over (order by SaleDate desc rows between current row and 2 following) as MA
 from ProductSales
 --15. Write a query to show the difference between each sale amount and the average sale amount.
 select *,
@@ -140,24 +140,25 @@ select *,
 from ProductSales
 
 --16. Find Employees Who Have the Same Salary Rank
-with cte as(
+with CTERank as(
 select *,
 	rank() over (order by salary desc) rnk
 from Employees1
 )
 select cte1.*
-from cte cte1, cte cte2
-where cte1.rnk = cte2.rnk
+from CTERank cte1
+join CTERank cte2
+on cte1.rnk = cte2.rnk
 and cte1.EmployeeID <> cte2.EmployeeID
 
 --17. Identify the Top 2 Highest Salaries in Each Department
-with cte as(
+with CTERank as(
 select *,
 	rank() over (partition by Department order by salary desc) rnk
 from Employees1
 )
 select *
-from cte
+from CTERank
 where rnk in(1, 2)
 
 --18. Find the Lowest-Paid Employee in Each Department
