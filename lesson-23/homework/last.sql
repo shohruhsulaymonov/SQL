@@ -57,67 +57,67 @@ select
 	end as OUTPUT
 from TheZeroPuzzle
 
---What is the total revenue generated from all sales?
+--7. What is the total revenue generated from all sales?
 select 
 	sum(Quantitysold*unitprice) TotalRevenue
 from Sales
---What is the average unit price of products?
+--8. What is the average unit price of products?
 select 
 	avg(unitprice) AvgPrice
 from Sales
---How many sales transactions were recorded?
+--9. How many sales transactions were recorded?
 select 
 	count(*)
 from Sales
---What is the highest number of units sold in a single transaction?
+--10. What is the highest number of units sold in a single transaction?
 select 
 	max(quantitysold) MaxUnitsSold
 from Sales
---How many products were sold in each category?
+--11. How many products were sold in each category?
 select
 	Category,
 	count(distinct Product) ProductCount
 from Sales
 group by Category
---What is the total revenue for each region?
+--12. What is the total revenue for each region?
 select 
 	Region,
 	sum(QuantitySold*UnitPrice) as TotalRevenue
 from Sales
 group by Region
---What is the total quantity sold per month?
+--13. What is the total quantity sold per month?
 select 
 	format(Saledate, 'yyyy-MM') Month,
 	sum(QuantitySold) TotalQuantity
 from Sales
 group by format(Saledate, 'yyyy-MM')
---Which product generated the highest total revenue?
+--14. hich product generated the highest total revenue?
 select top 1
 	Product,
 	sum(QuantitySold*UnitPrice) TotalRevenue
 from Sales
 group by Product
 order by TotalRevenue desc
---Compute the running total of revenue ordered by sale date.
+--15. Compute the running total of revenue ordered by sale date.
 select 
 	SaleDate,
 	(QuantitySold*UnitPrice) SaleAmount,
 	sum(QuantitySold*UnitPrice) over (order by saledate) RunnigTotal
 from Sales
---How much does each category contribute to total sales revenue?
+--16. How much does each category contribute to total sales revenue?
 select distinct
 	Category,
 	CAST(CAST(100*(sum(QuantitySold*UnitPrice) over (partition by category))/(sum(QuantitySold*UnitPrice) over ()) AS int) AS varchar) + '%' as ContributionPercent
 from Sales
 
---Show all sales along with the corresponding customer names
+--17. Show all sales along with the corresponding customer names
 select
 	s.*, 
 	CustomerName
 from Sales s
 join Customers c
 on s.CustomerID = c.CustomerID
---List customers who have not made any purchases
+--18. List customers who have not made any purchases
 select *
 from Customers c
 where not exists (
@@ -125,7 +125,7 @@ where not exists (
 	from Sales s
 	where c.CustomerID = s.CustomerID
 	)
---Compute total revenue generated from each customer
+--19. Compute total revenue generated from each customer
 select
 	CustomerName,
 	sum(QuantitySold*UnitPrice) Revenue
@@ -133,7 +133,7 @@ from Sales s
 join Customers c
 on s.CustomerID = c.CustomerID
 group by CustomerName
---Find the customer who has contributed the most revenue
+--20. Find the customer who has contributed the most revenue
 select top 1
 	CustomerName,
 	sum(QuantitySold*UnitPrice) Revenue
@@ -142,7 +142,7 @@ join Customers c
 on s.CustomerID = c.CustomerID
 group by CustomerName
 order by Revenue desc
---Calculate the total sales per customer per month
+--21. Calculate the total sales per customer per month
 select 
 	CustomerID,
 	datename(month, SaleDate) Month,
@@ -152,22 +152,22 @@ group by
 	CustomerID,
 	datename(month, SaleDate)
 
---List all products that have been sold at least once
+--22. List all products that have been sold at least once
 select distinct
 	Product
 from Sales
---Find the most expensive product in the Products table
+--23. Find the most expensive product in the Products table
 select distinct top 1
 	Product,
 	UnitPrice
 from Sales
 order by UnitPrice desc
---Show each sale with its corresponding cost price from the Products table
+--24. Show each sale with its corresponding cost price from the Products table
 select s.*, CostPrice
 from Sales s
 join Products p
 on s.ProductID = p.ProductID
---Find all products where the selling price is higher than the average selling price in their category
+--25. Find all products where the selling price is higher than the average selling price in their category
 with CTEAvg as(
 select 
 	*,
