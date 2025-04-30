@@ -25,18 +25,30 @@ from TestFixLengths
 where len(Vals) between 6 and 10
 
 --Puzzle 4: In this puzzle you have to find the maximum value for each Id and then get the Item for that Id and Maximum value. The Challenge is to do that in a SINGLE SELECT. Please check out sample input and expected output.
-
-
-
+select id,
+	Item,
+	vals
+from (
+	select
+		id,
+		Item,
+		vals,
+		row_numBER() over (Partition by id order by vals desc) rownum
+	from TestMaximum tm1
+	) t where rownum = 1
+--Puzzle 5: In this puzzle you have to first find the maximum value for each Id and DetailedNumber, and then Sum the data using Id only. Can you do this both in a single SELECT ?. Please check out sample input and expected output.
+select 
+	id,
+	sum(maxval) SumofMax
+from (
+	select distinct
+		DetailedNumber,
+		max(vals) over (partition by DetailedNumber, id) MaxVal,
+		id
+	from SumOfMax
+	) t
+group by id
 --Puzzle 6: In this puzzle you have to find difference between a and b column between each row and if the difference is not equal to 0 then show the difference i.e. a – b otherwise 0. Now you need to replace this zero with blank.Please check the sample input and the expected output.
-
-CREATE TABLE TheZeroPuzzle (
-    Id INT,
-    a INT,
-    b INT
-);
-INSERT INTO TheZeroPuzzle VALUES
-(1,10,4), (2,10,10), (3,1, 10000000), (4,15,15);
 
 select
 	*,
@@ -44,3 +56,124 @@ select
 	else cast(a - b as varchar)
 	end as OUTPUT
 from TheZeroPuzzle
+
+--What is the total revenue generated from all sales?
+select 
+	sum(Quantitysold*unitprice) TotalRevenue
+from Sales
+--What is the average unit price of products?
+select 
+	avg(unitprice) AvgPrice
+from Sales
+--How many sales transactions were recorded?
+select 
+	count(*)
+from Sales
+--What is the highest number of units sold in a single transaction?
+select 
+	max(quantitysold) MaxUnitsSold
+from Sales
+--How many products were sold in each category?
+select
+	Category,
+	count(distinct Product) ProductCount
+from Sales
+group by Category
+--What is the total revenue for each region?
+select 
+	Region,
+	sum(QuantitySold*UnitPrice) as TotalRevenue
+from Sales
+group by Region
+--What is the total quantity sold per month?
+select 
+	format(Saledate, 'yyyy-MM') Month,
+	sum(QuantitySold) TotalQuantity
+from Sales
+group by format(Saledate, 'yyyy-MM')
+--Which product generated the highest total revenue?
+select top 1
+	Product,
+	sum(QuantitySold*UnitPrice) TotalRevenue
+from Sales
+group by Product
+order by TotalRevenue desc
+--Compute the running total of revenue ordered by sale date.
+select 
+	SaleDate,
+	(QuantitySold*UnitPrice) SaleAmount,
+	sum(QuantitySold*UnitPrice) over (order by saledate) RunnigTotal
+from Sales
+--How much does each category contribute to total sales revenue?
+select distinct
+	Category,
+	CAST(CAST(100*(sum(QuantitySold*UnitPrice) over (partition by category))/(sum(QuantitySold*UnitPrice) over ()) AS int) AS varchar) + '%' as ContributionPercent
+from Sales
+
+--Show all sales along with the corresponding customer names
+select
+	s.*, 
+	CustomerName
+from Sales s
+join Customers c
+on s.CustomerID = c.CustomerID
+--List customers who have not made any purchases
+select *
+from Customers c
+where not exists (
+	select distinct 1 
+	from Sales s
+	where c.CustomerID = s.CustomerID
+	)
+--Compute total revenue generated from each customer
+select
+	CustomerName,
+	sum(QuantitySold*UnitPrice) Revenue
+from Sales s
+join Customers c
+on s.CustomerID = c.CustomerID
+group by CustomerName
+--Find the customer who has contributed the most revenue
+select top 1
+	CustomerName,
+	sum(QuantitySold*UnitPrice) Revenue
+from Sales s
+join Customers c
+on s.CustomerID = c.CustomerID
+group by CustomerName
+order by Revenue desc
+--Calculate the total sales per customer per month
+select 
+	CustomerID,
+	datename(month, SaleDate) Month,
+	sum(QuantitySold*UnitPrice) TotalSales
+from Sales
+group by
+	CustomerID,
+	datename(month, SaleDate)
+
+--List all products that have been sold at least once
+select distinct
+	Product
+from Sales
+--Find the most expensive product in the Products table
+select distinct top 1
+	Product,
+	UnitPrice
+from Sales
+order by UnitPrice desc
+--Show each sale with its corresponding cost price from the Products table
+select s.*, CostPrice
+from Sales s
+join Products p
+on s.ProductID = p.ProductID
+--Find all products where the selling price is higher than the average selling price in their category
+with CTEAvg as(
+select 
+	*,
+	avg(sellingprice) over (partition by category) AvgPrice
+from Products
+)
+select * 
+from CTEAvg
+where SellingPrice > AvgPrice
